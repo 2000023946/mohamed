@@ -1,0 +1,49 @@
+{% extends './layout.html' %}
+
+{% load static %}
+
+{% block title %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <style>
+        p{
+            margin:0px;
+        }
+        div{
+            display:flex;
+        }
+        h1, h3{
+            text-align: center;
+        }
+        a{
+            margin:5px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div>
+        <h1>{{ blog.title }}</h1>
+        <h3>{{ blog.description }}</h3>  
+        <h1><a href="{% url 'home' %}">go back</a></h1>
+    </div>
+    <div class="text-container">
+        <div class="add-container">
+            <div class="message">
+                {% for post in posts %}
+                    <p>{{ post.username }}</p><br>
+                    <p>{{ post.txt_message }}</p><br>
+                    <p>{{ post.date }}</p>
+                    {% if username == post.username %}
+                        <a href = "{% url 'remove' pk=blog.id sk=post.id %}" class = "remove-button">remove</a>
+                        <a href = "{% url 'update' pk=blog.id sk=post.id %}" class = "update">update</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <form action="{% url 'blog_content' blog.id %}" method="post">
+                {% csrf_token %}
+                <input type="text" name="message" placeholder="Send message" required>
+                <input type="submit" value="add">
+            </form>
+        </div>
+    </div>
+{% endblock %}

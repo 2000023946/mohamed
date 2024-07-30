@@ -1,0 +1,26 @@
+{% extends 'welcome_page/layout.html' %}
+
+{% load static %}
+
+{% block title %}
+    <link rel="stylesheet" href="{% static 'css/user.css' %}">
+{% endblock %}
+
+{% block body %}
+
+<div class = "container">
+    <div class="user-container">
+        <a href="{% url 'sign_up' %}" class="switch-from">Sign up</a>
+       <h2>Login</h2>
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+       <form action="{% url 'login' %}" method="post" class="form-container">
+            {% csrf_token %}
+            <input class = "text-input" type="text" name="username" placeholder="Enter username" required>
+            <input class = "text-input" type="password" name="password" placeholder="Password" required>
+            <input class = "submit" type="submit" value="Login">
+       </form>
+    </div>
+</div>
+{% endblock %}

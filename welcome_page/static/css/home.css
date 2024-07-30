@@ -1,0 +1,28 @@
+.welcome-message{
+    text-align: center;
+    color:red;
+}
+.blog-container{
+    background-color: lightblue;
+    border: 1px solid black;
+    margin:10px;
+}
+.text-container{
+    position:fixed;
+    top:140px;
+    height: 500px;
+    left:0;
+    right:0;
+    background-color: skyblue;
+}
+.add-container{
+    position: absolute;
+    bottom:-30px;
+    left:20px;
+}
+.message{
+    background-color: orange;
+}
+p{
+    margin:0px;
+}

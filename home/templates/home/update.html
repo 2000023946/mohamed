@@ -1,0 +1,17 @@
+{% extends './layout.html' %}
+
+{% load static %}
+
+{% block title %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block body %}
+<h1>update </h1>
+<a href="{% url 'blog_content' pk=blog.id %}">cancel</a>
+    <form action="{% url 'update' pk=blog.id sk=post.id %}" method="post">
+        {% csrf_token %}
+        <input type="text" name="new-txt">
+        <input type="submit" value="update">
+    </form>
+{% endblock %}

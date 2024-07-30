@@ -1,0 +1,19 @@
+{% extends 'welcome_page/layout.html' %}
+
+{% block body %}
+
+<div class = "container">
+    <div class="button-container">
+        <h1 class="welcome-text">Welcome to BlogSpace</h1>
+        <a href="{% url 'login' %}">
+            <button>Login</button>
+        </a>
+        <a href="{% url 'sign_up' %}">
+            <button>Sign up</button>
+        </a>
+    </div>
+    <div class="link-container">
+        <a href="{% url 'home' %}">Continue as Guest</a>
+    </div>
+</div>
+{% endblock %}

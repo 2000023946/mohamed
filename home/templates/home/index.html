@@ -1,0 +1,129 @@
+{% extends './layout.html' %}
+
+{% load static %}
+
+{% block title %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block body %}
+
+    <h1 class = "welcome-message">Welcome to {{user.username}} BlogSpace!</h1>
+    <p>
+        <a href="{% url 'create_blog' %}">Create new Blog</a>
+        <a href="{% url 'logout' %}">Log out</a>
+    </p>
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+    <h1>Search</h1>
+    <form action="{% url 'home' %}" method="get">
+        <input type="search" name="q">
+        <input type="submit" value="submit">
+    </form>
+    {% if q_set %}
+        <h4>Results</h4>
+    {% endif %}
+    {% for blog in q_set %}
+    <div class ="blog-container">
+        <a href="{% url 'home' %}">
+            <h3>{{ blog.title }}</h3>
+            <ul>
+                <li>{{ blog.description }}</li>
+                <li> made {{ blog.date }} by {{blog.created_user.username}}</li>
+                {% if blog.state %}
+                    <li>public</li>
+                {% else %}
+                    <li>private</li>
+                {% endif %}
+            </ul>
+        </a>
+    </div>
+    {% endfor %}
+
+    <h1>recents</h1>
+    {% for blog in recent_blogs reversed %}
+    <div class ="blog-container" >
+        <a href="{% url 'blog_content' blog.id %}">
+            <h3>{{ blog.title }}</h3>
+            <ul>
+                <li>{{ blog.description }}</li>
+                <li> made {{ blog.date }} by {{blog.created_user.username}}</li>
+                {% if blog.state %}
+                    <li>public</li>
+                {% else %}
+                    <li>private</li>
+                {% endif %}
+            </ul>
+        </a>
+    </div>
+    {% empty %}
+        <p>no recents</p>
+    {% endfor %}
+    <h1>Popular</h1>
+    {% for blog in popular_blogs %}
+    <div class ="blog-container" >
+        <a href="{% url 'blog_content' blog.id %}">
+            <h3>{{ blog.title }}</h3>
+            <ul>
+                <li>{{ blog.description }}</li>
+                <li> made {{ blog.date }} by {{blog.created_user.username}}</li>
+                {% if blog.state %}
+                    <li>public</li>
+                {% else %}
+                    <li>private</li>
+                {% endif %}
+            </ul>
+        </a>
+    </div>
+    {% empty %}
+        <p>no recents</p>
+    {% endfor %}
+
+    <h1>All blogs</h1>
+    {% for blog in blogs %}
+        <div class ="blog-container" >
+            <a href="{% url 'blog_content' blog.id %}">
+                <h3>{{ blog.title }}</h3>
+                <ul>
+                    <li>{{ blog.description }}</li>
+                    <li> made {{ blog.date }} by {{blog.created_user.username}}</li>
+                    {% if blog.state %}
+                        <li>public</li>
+                    {% else %}
+                        <li>private</li>
+                    {% endif %}
+                </ul>
+            </a>
+        </div>
+    {% endfor %}
+    <h1>Your blogs</h1>
+    {% for blog in user_blogs %}
+        <div class ="blog-container" >
+            <a href="{% url 'blog_content' blog.id %}">
+                <h3>{{ blog.title }}</h3>
+                <ul>
+                    <li>{{ blog.description }}</li>
+                    <li> made {{ blog.date }} by {{blog.created_user.username}}</li>
+                    {% if blog.state %}
+                        <li>public</li>
+                    {% else %}
+                        <li>private</li>
+                    {% endif %}
+                </ul>
+            </a>
+        </div>
+    {% empty %}
+    <p>No Blogs </p> <br>
+    <p>
+        <a href="{% url 'create_blog' %}">Create new Blog</a>
+    </p>
+    {% endfor %}
+    <h1>Requests to join private</h1>
+    {% for permission in permissions %}
+        <ul>
+            <li>name : {{ permission.user_from }}</li>
+            <li>{{ permission.blog }}</li>
+        </ul>
+    {% endfor %}
+{% endblock %}
