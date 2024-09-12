@@ -23,3 +23,7 @@ class Request(models.Model):
     user_from = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="requestors")
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
     user_to = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="acceptors")
+    status = models.IntegerField(default=0)#0-> pending, 1->Accepted, 2->Declined
+    def __str__(self) -> str:
+        return f"user from {self.user_from} , blog {self.blog} user_to is {self.user_to} and id of {self.id}"
+    

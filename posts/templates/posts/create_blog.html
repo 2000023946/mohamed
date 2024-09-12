@@ -4,21 +4,84 @@
 
 {% block title %}
     <link rel="stylesheet" href="{% static 'css/posts.css' %}">
+    <style>
+        body{
+            background-color: lightblue;
+        }
+.user-container{
+    background-color:white;
+    display:flex;
+    flex-direction: column;
+    padding: 30px;
+    text-align: center;
+    position:relative;
+    font-family: Sora, Arial, Helvetica, sans-serif;
+    font-size:40px;
+    border-radius: 10px;;
+}
+p{
+    font-size:15px;
+    color:red;
+    margin:0px;
+}
+.form-container{
+    display:flex;
+    flex-direction:column;
+    margin:0 20px 20px 20px;
+}
+h2{
+    margin-bottom:0px;
+    margin-top:20px;
+
+}
+.text-input,
+.submit{
+    margin:10px;
+    padding:20px 30px;
+    font-family: Sora, Arial;
+    font-size:30px;
+    border-radius:10px;
+    border:none;
+}
+.text-input{
+    background-color: rgb(240, 238, 238);
+    text-align: left;
+}
+.switch-from{
+    position:absolute;
+    left:20px;
+    top:30px;
+    font-size:17px;
+}
+.submit{
+    background-color: rgb(231, 145, 16);
+    color:white;
+    cursor: pointer;
+    transition: background-color .2s;
+}
+.submit:hover{
+    background-color: rgb(187, 119, 16);
+}
+    </style>
 {% endblock %}
 
 {% block body %}
-    <h1>create a new blog</h1>
-    <p>
-        <a href="{% url 'home' %}">go back</a>
-    </p>
-    <form action="{% url 'create_blog' %}" method="post">
-        {% csrf_token %}
-        <input type="text" name = "title" placeholder="Title" required>
-        <input type="text" name = "description" placeholder="description" required>
-        {% for message in messages %}
-        <p>{{message}}</p>
-        {% endfor %}
-        <input type="text" name = "state" placeholder="public or private">
-        <input type="submit" value="create">
-    </form>
+<div class="div-container">
+    <div class = "container">
+        <div class="user-container">
+            <a href="{% url 'home' %}" class="switch-from">Go Back</a>
+           <h2>Create a Blog</h2>
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+           <form action="{% url 'create_blog' %}" method = "post" class="form-container">
+                {% csrf_token %}
+                <input class = "text-input" type="text" name = "title" placeholder="Title" required>
+                <input class = "text-input" type="text" name = "description" placeholder="description" required>
+                <input class = "text-input" type="text" name = "state" placeholder="public or private">
+                <input class = "submit" type="submit" value="create">
+           </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

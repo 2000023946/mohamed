@@ -4,14 +4,97 @@
 
 {% block title %}
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <style>
+        body{
+            background-color: lightblue;
+        }
+        .container{
+            background-color: white;;
+            position:fixed;
+            border: none;
+            top:50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding:10px;
+            border-radius: 20px;
+        }
+        .button-container{
+            display:flex;
+            justify-content: space-evenly;
+            margin:10px;
+        }
+        h1{
+            margin: 10px;
+            text-align: center;
+        }
+        .decline-button{
+            font-size: 15px;;
+            padding: 10px 20px;
+            margin:10px;
+            border-radius: 20px;;
+            border: none;;
+            cursor: pointer;
+            box-shadow: 5px 5px rgba(0,0,0,.5);
+            transition: text-decoration  0.2s,
+                        background-color 0.2s,
+                        box-shadow       0.2s;
+        }
+        .decline-button a{
+            text-decoration: none;
+            color:black;
+        }
+        .decline-button:hover{
+            background-color: rgb(230, 219, 219);;
+            text-decoration: underline;
+        }
+        .decline-button:active{
+            box-shadow: 3px 3px rgba(0,0,0.1);
+        }
+        .top-container{
+            display:flex;
+            align-items: center;;
+        }
+        .search-bar{
+            padding:10px;
+            border-top-left-radius: 20px;;
+            border-bottom-left-radius: 20px;;
+            border: none;
+            box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.4) inset;
+        }
+        .add-button{
+            padding:10px 20px;;
+            border: none;;
+            border-top-right-radius: 20px;;
+            border-bottom-right-radius: 20px;;
+            margin-left:-4px;
+            cursor: pointer;
+            transition: background-color 0.2s,
+                        color            0.2s;;
+        }
+        .add-button:hover{
+            background-color:rgb(224, 217, 217);
+        }
+        .add-button:active{
+            background-color: rgb(185, 180, 180);
+            color:rgb(255, 255, 255);
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
-<h1>update </h1>
-<a href="{% url 'blog_content' pk=blog.id %}">cancel</a>
-    <form action="{% url 'update' pk=blog.id sk=post.id %}" method="post">
-        {% csrf_token %}
-        <input type="text" name="new-txt">
-        <input type="submit" value="update">
-    </form>
+    <div class="container">
+        <div class="top-container">
+            <button class="decline-button">
+                <a href="{% url 'blog_content' pk=blog.id %}">go back</a>
+            </button>
+            <h1>Update Text </h1>
+        </div>
+        <div class="button-container">
+            <form action="{% url 'update' pk=blog.id sk=post.id %}" method="post">
+                {% csrf_token %}
+                <input class = "search-bar" type="text" name="new-txt" required>
+                <input class = "add-button" type="submit" value="update">
+            </form>
+        </div>
+    </div>
 {% endblock %}

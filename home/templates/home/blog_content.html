@@ -8,42 +8,130 @@
         p{
             margin:0px;
         }
-        div{
-            display:flex;
-        }
         h1, h3{
             text-align: center;
         }
         a{
             margin:5px;
         }
+        .content-title{
+            text-align: center;
+        }
+        .text-container{
+            position:fixed;
+            background-color: lightblue;
+            left:5px;
+            right:5px;
+            top:150px;
+            height:500px;
+            overflow-y: scroll;
+        }
+        .form-container{
+            position:fixed;
+            bottom:0px;
+            left:0px;
+            right:0px;
+            height:50px;
+            background-color: blue;
+            display:flex;
+            align-items: center;
+            justify-content: space-evenly;
+            z-index: 1000;
+        }
+        .search-bar{
+            width:600px;
+            padding:10px;
+            border-top-left-radius: 20px;;
+            border-bottom-left-radius: 20px;;
+            border: none;
+            box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.4) inset;
+        }
+        .add-button{
+            padding:10px 20px;;
+            border: none;;
+            border-top-right-radius: 20px;;
+            border-bottom-right-radius: 20px;;
+            margin-left:-4px;
+            cursor: pointer;
+            transition: background-color 0.2s,
+                        color            0.2s;;
+        }
+        .add-button:hover{
+            background-color:rgb(224, 217, 217);
+        }
+        .add-button:active{
+            background-color: rgb(185, 180, 180);
+            color:rgb(255, 255, 255);
+        }
+        .message{
+            background-color: rgb(244, 188, 84);
+            margin:10px;
+            padding:10px;
+            border-radius:10px;
+            cursor: pointer;
+            position: relative;
+        }
+        .remove-button,
+        .update-button{
+            opacity: 0;
+            transition: opacity 0.2s;
+            position:absolute;
+            text-decoration: none;
+            color:black;
+            transition: text-decoration 0.2s;
+        }
+        .remove-button{
+            top:5px;
+            right:5px;
+        }
+        .update-button{
+            bottom:5px;
+            right:5px;
+        }
+        .remove-button:hover,
+        .update-button:hover{
+            text-decoration: underline;
+        }
+        .remove-button:active,
+        .update-button:active{
+            text-decoration: underline;
+            color:blue;
+        }
+        .message:hover .remove-button,
+        .message:hover .update-button{
+            opacity: 1;
+        }
     </style>
 {% endblock %}
 
 {% block body %}
-    <div>
+    <div class="content-title">
         <h1>{{ blog.title }}</h1>
+        <p><a href="{% url 'home' %}">
+            Go back
+        </a></p>
         <h3>{{ blog.description }}</h3>  
-        <h1><a href="{% url 'home' %}">go back</a></h1>
     </div>
     <div class="text-container">
         <div class="add-container">
-            <div class="message">
-                {% for post in posts %}
+                {% for post in posts reversed%}
+                <div class="message">
                     <p>{{ post.username }}</p><br>
                     <p>{{ post.txt_message }}</p><br>
                     <p>{{ post.date }}</p>
                     {% if username == post.username %}
-                        <a href = "{% url 'remove' pk=blog.id sk=post.id %}" class = "remove-button">remove</a>
-                        <a href = "{% url 'update' pk=blog.id sk=post.id %}" class = "update">update</a>
+                    <a href = "{% url 'remove' pk=blog.id sk=post.id %}" class = "remove-button">remove</a>
+                    <a href = "{% url 'update' pk=blog.id sk=post.id %}" class = "update-button">update</a>
                     {% endif %}
+                </div>
                 {% endfor %}
+            <div class="form-container">
+                <form class = "form-content" action="{% url 'blog_content' blog.id %}" method="post">
+                    {% csrf_token %}
+                    <input class = "search-bar" type="text" name="message" placeholder="Send message" required>
+                    <input class = "add-button" type="submit" value="add">
+                </form>
             </div>
-            <form action="{% url 'blog_content' blog.id %}" method="post">
-                {% csrf_token %}
-                <input type="text" name="message" placeholder="Send message" required>
-                <input type="submit" value="add">
-            </form>
         </div>
     </div>
 {% endblock %}

@@ -4,13 +4,69 @@
 
 {% block title %}
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <style>
+        body{
+            background-color: lightblue;
+        }
+        .container{
+            background-color: white;;
+            position:fixed;
+            border: none;
+            top:50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding:10px;
+            border-radius: 20px;
+        }
+        .button-container{
+            display:flex;
+            justify-content: space-evenly;
+            margin:10px;
+        }
+        h1{
+            margin: 10px;
+            text-align: center;
+        }
+        .accept-button,
+        .decline-button{
+            font-size: 20px;;
+            padding: 15px 30px;
+            margin:10px;
+            border-radius: 20px;;
+            border: none;;
+            cursor: pointer;
+            box-shadow: 5px 5px rgba(0,0,0,.5);
+            transition: text-decoration  0.2s,
+                        background-color 0.2s,
+                        box-shadow       0.2s;
+        }
+        .decline-button a{
+            text-decoration: none;
+            color:black;
+        }
+        .accept-button:hover,
+        .decline-button:hover{
+            background-color: rgb(230, 219, 219);;
+            text-decoration: underline;
+        }
+        .accept-button:active,
+        .decline-button:active{
+            box-shadow: 3px 3px rgba(0,0,0.1);
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
-<h1>remove {{post.id}}</h1>
-<a href="{% url 'blog_content' pk=blog.id %}">go back</a>
-    <form action="{% url 'remove' pk=blog.id sk=post.id %}" method="post">
-        {% csrf_token %}
-        <input type="submit" value="remove">
-    </form>
+<div class="container">
+    <h1>Confirm to Remove </h1>
+    <div class="button-container">
+        <button class="decline-button">
+            <a href="{% url 'blog_content' pk=blog.id %}">go back</a>
+        </button>
+        <form action="{% url 'remove' pk=blog.id sk=post.id %}" method="post">
+            {% csrf_token %}
+            <input class = "accept-button" type="submit" value="remove">
+        </form>
+    </div>
+</div>
 {% endblock %}

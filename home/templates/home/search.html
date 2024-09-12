@@ -1,0 +1,76 @@
+{% extends './index.html' %}
+
+{% block body %}
+
+<h1 class = "welcome-message">
+    <a href="{% url 'home' %}">
+        Welcome to {{user.username}} BlogSpace!
+    </a>
+    </h1>
+    <div class="header">
+        <div class="left-header">
+            <button class="create-button">
+                <a href="{% url 'create_blog' %}">Create new Blog</a>
+            </button>
+        </div>
+        <div class="middle-header">
+            <form action="{% url 'search' %}" method="get">
+                <div class="search-bar">
+                    <input id="search" type="search" name="q" placeholder="Search">
+                    <input class = "search-button" type="submit" value="submit">
+                </div>
+            </form>
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        <div class="right-header">
+            <button class="notification-button">
+                <a href="{% url 'requests' %}">
+                Notifications
+                {% if num_requests > 0%}
+                <p class="num-requests">{{ num_requests }}</p>
+                {% endif %}
+                </a>
+            </button>
+            <button class="logout-button">
+                <a href="{% url 'logout' %}">Log out</a>
+            </button>
+        </div>
+    </div>
+
+
+
+<div class="blog-contents">
+    {% if q_set %}
+    {% for blog in q_set %}
+    <a href="{% url 'blog_content' blog.id %}">
+        <div class ="blog-container">
+            <div class="blog-title">
+                <h3 >{{ blog.title }}</h3>
+            </div>
+            <div class="blog-description">
+                <p class="description">{{ blog.description }}</p>
+            </div>
+            <div class="bottom-blog-section">
+                <div class="creators-users">
+                    <p class="creator">Creator : {{blog.created_user.username}}</p>
+                    <p class="users"> Chatters : {{ blog.number_users }}</p>
+                </div class="date-section">
+                    <p class="date"> {{ blog.date }}</p>
+                </div>
+                <div class="status">
+                    {% if blog.state %}
+                        <p>Public</p>
+                    {% else %}
+                        <p>Private</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+        </div>
+    </a>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}
