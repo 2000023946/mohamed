@@ -41,6 +41,7 @@ def userAlgo(user):
             if not Recent.objects.filter(user_for=user, recent_blog=q_blog):
                 queue.append(q_blog)
     return queue
+
 def index(request):
     user_blogs = []
     recents = []

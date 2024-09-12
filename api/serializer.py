@@ -15,7 +15,6 @@ class UserSerializer(serializers.Serializer):
     
     @staticmethod
     def run_dict(dict, data):
-        print(data)
         data = data['user']
         for pair in data:
             key, value = zip(*pair.items())
@@ -45,7 +44,7 @@ class RecentSerializer(serializers.ModelSerializer):
         return f'http://127.0.0.1:8000/api/recent/{obj.id}'
 
     def get_recent_id(self, obj):
-        return obj.id
+        return obj.id if obj.id else None
 
     def to_representation(self ,instance):
         dict = super().to_representation(instance)
