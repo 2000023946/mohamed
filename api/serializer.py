@@ -61,10 +61,11 @@ class RecentSerializer(serializers.ModelSerializer):
         return dict
 
 class MemberSerializer(serializers.ModelSerializer):
+    auth_info = serializers.SerializerMethodField()
     class Meta:
         model = Member
-        fields = ['id','user','blog']
-        read_only_fields = ['user','blog']
+        fields = ['id','user','blog', 'auth_info']
+        read_only_fields = ['user','blog','auth_info']
     
     def get_id(self, value):#first to ids are switched 
         if value == 1:
@@ -73,6 +74,13 @@ class MemberSerializer(serializers.ModelSerializer):
             return 1
         return value
 
+    def get_auth_info(self, obj):
+        user = obj.user
+        return {
+            'username': user.username,
+            'password': user.password
+        }
+    
     def to_representation(self, instance):
         dict = super().to_representation(instance)
         user_id = self.get_id(dict['user'])

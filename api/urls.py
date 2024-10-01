@@ -1,5 +1,7 @@
 from django.urls import path
-from . import views
+from . import views, auth_views
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 
 urlpatterns = [
     path('recent/',views.RecentListAPIView.as_view()),
@@ -15,6 +17,12 @@ urlpatterns = [
     path('blog/popular',views.PopularAPIView.as_view()),
     path('blog/search/', views.BlogSearchAPIView.as_view()),
     path('recent/<str:username>/', views.MemberRecentAPIView.as_view()),
-    path('recent/<str:username>/recommend', views.MemberRecentRecommendAPIView.as_view())
+    path('recent/<str:username>/recommend', views.MemberRecentRecommendAPIView.as_view()),
+    ## auth view
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),   
+    ## posting new user data
+    path('signup/', auth_views.SignUpUserAPIView.as_view()),
+    path('login/', auth_views.LoginView.as_view())
 ]
 

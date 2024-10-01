@@ -41,6 +41,7 @@ h2{
     left:20px;
     top:30px;
     font-size:17px;
+    cursor: pointer;
 }
 .submit{
     background-color: rgb(231, 145, 16);

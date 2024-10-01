@@ -84,7 +84,6 @@ class MemberMixinAPIView(BaseMember, generics.RetrieveAPIView, generics.DestroyA
     """
 
 class MemberRecentAPIView(APIView):
-    
     def get(self, request, username):
         queryset = Member.objects.recent(username)
         data = RecentSerializer(queryset, many=True).data 
