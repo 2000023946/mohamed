@@ -15,11 +15,7 @@ export default function SignUp(props){
 
     function collectData(event){
         event.preventDefault();
-        if (data.password !== data.password2){
-            console.log('passwords do not match!')
-        }else{
-            console.log('data sent!')
-            console.log(data)
+        if (data.password === data.password2){
             fetch('http://127.0.0.1:8000/api/signup/', {
                 method:'POST',
                 headers: {
@@ -28,12 +24,9 @@ export default function SignUp(props){
                 body:JSON.stringify(JSON.stringify(data))
             }).then(resp => resp.json())
             .then(data =>{
-                console.log(data)
                 if (data.Success){
-                    console.log('success')
                     Utility.handleClick(props, 'login')
                 }else{
-                    console.log('failed')
                     setErrorData(data.Response)
                 }
             })
@@ -46,7 +39,7 @@ export default function SignUp(props){
     return(
         <div className = "container">
             <div className="user-container">
-                <div  className="switch-from" onClick={() => Utility.handleClick(props, 'login')}>Login</div>
+                <div  className="switch-from" onClick={() => Utility.handleClick(props.page.setPage, 'login')}>Login</div>
                 <h2>Sign up</h2>
                 {data.password !== data.password2 && <p>{errorData}</p>}
                 <form className="form-container" onSubmit={collectData}>

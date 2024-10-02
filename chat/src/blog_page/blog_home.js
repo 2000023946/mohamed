@@ -3,11 +3,11 @@ import './css/header.css'
 import BlogPage from './blog_page'
 import Header from './header'
 
-function BlogHome(){
+function BlogHome(props){
     return(
         <div>
-            <Header />
-            <BlogPage />
+            <Header username={props.display.memberData.user.username}/>
+            <BlogPage {...props}/>
         </div>
     )
 }

@@ -15,8 +15,6 @@ export default function Login(props){
 
     function collectData(event){
         event.preventDefault();
-        console.log('data sent!')
-        console.log(data)
         fetch('http://127.0.0.1:8000/api/login/', {
             method:'POST',
             headers: {
@@ -25,25 +23,25 @@ export default function Login(props){
             body:JSON.stringify(JSON.stringify(data))
         }).then(resp => resp.json())
         .then(data =>{
-            console.log(data)
-            if (data.Success){
-                console.log('success')
-            }else{
-                console.log('failed')
-            }
             setErrorData({
                 'isError':!data.Success,
                 'error':data.Response
             })
-            fetch(`http://127.0.0.1:8000/api/member/${data.User_Id}`,{
+            return fetch(`http://127.0.0.1:8000/api/member/${data.User_Id}`,{
                 method:'GET',
                 headers: {
                     "Authorization": `Token ${data.Token}`
                 },
             }).then(resp => resp.json())
-            .then(data =>
-                console.log(data)
-            )
+            .then(memberData =>{
+                props.display.setDisplay({
+                    'name':'BlogHome',
+                    'memberData':memberData
+                })
+                Utility.handleClick(props.page.setPage, memberData.user.username)
+                console.log(memberData)
+                localStorage.setItem(memberData.user.username, JSON.stringify(memberData))
+            })
         })
     }
 
@@ -52,7 +50,7 @@ export default function Login(props){
     return(
         <div className='container'>
             <div className="user-container">
-                <div className="switch-from" onClick={() => Utility.handleClick(props, 'signup')}>Sign up</div>
+                <div className="switch-from" onClick={() => Utility.handleClick(props.page.setPage, 'signup')}>Sign up</div>
                 <h2>Login</h2>
                 {errorData.isError && <p>{errorData.error}</p>}
                 <form className="form-container" onSubmit={collectData}>

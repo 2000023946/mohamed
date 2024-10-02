@@ -1,10 +1,13 @@
 import React, {useState} from 'react'
 import BlogSection from './blog_section'
-function BlogPage(){
-    const name = ['Recommendation', 'Recents', "Popular", 'Your Blogs', 'All Blogs']
+function BlogPage(props){
+    const name = ['Recommendation', 'Recents', "Popular", 'Blogs']
     const blogsList = name.map((title) =>{
        return(
-            <BlogSection name={title} key={title}/>
+            <div key={title}>
+                <h1>{title}</h1>
+                <BlogSection type={title.toLowerCase()} {...props}/>
+            </div>
         )
     })
     return(

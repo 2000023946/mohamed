@@ -17,31 +17,31 @@ class BlogManager(models.Manager):
         return BlogQuerySet(model=self.model, using=self._db)
     
     def popular(self):
-        list = []
-        for blog in Blog.objects.all():
-            new_data = {"blog_id":blog.id, "users":blog.number_users, "blog_url":f'http://127.0.0.1:8000/api/blog/{blog.id}'}
-            if len(list) <= 5:
-                list.append(new_data)
-            else:
-                if list[len(list)-1]['users'] < new_data['users']:
-                    list.append(new_data)
-                else:
-                    continue
-            if len(list) == 1:
-                continue
-            else:
-                lo = len(list)-1
-                po = lo-1
-                while po >= 0 and list[lo]['users'] > list[po]['users']:
-                    cur = list[lo]
-                    list[lo] = list[po]
-                    list[po] = cur
-                    po-= 1
-                    lo -=1
-            if len(list) > 6:
-                list.pop()
-        return list
-        #return self.get_queryset().order_by('number_users')[:5]
+        # list = []
+        # for blog in Blog.objects.all():
+        #     new_data = {"blog_id":blog.id, "users":blog.number_users, "blog_url":f'http://127.0.0.1:8000/api/blog/{blog.id}'}
+        #     if len(list) <= 5:
+        #         list.append(new_data)
+        #     else:
+        #         if list[len(list)-1]['users'] < new_data['users']:
+        #             list.append(new_data)
+        #         else:
+        #             continue
+        #     if len(list) == 1:
+        #         continue
+        #     else:
+        #         lo = len(list)-1
+        #         po = lo-1
+        #         while po >= 0 and list[lo]['users'] > list[po]['users']:
+        #             cur = list[lo]
+        #             list[lo] = list[po]
+        #             list[po] = cur
+        #             po-= 1
+        #             lo -=1
+        #     if len(list) > 6:
+        #         list.pop()
+        # return list
+        return self.get_queryset().order_by('number_users')[:5]
 
     def get_search(self, query):
         return self.get_queryset().get_search_query(query)
@@ -66,12 +66,18 @@ class MemberQuerySet(models.QuerySet):
     def get_user_query(self, username):
         user = User.objects.get(username=username)
         return user.recents.all()
+    def get_blog_query(self, blog_title):
+        queryset_pool = Blog.objects.exclude(title__exact=blog_title)
+        return queryset_pool.filter(title__contains=blog_title)
+
 
 class MemberManager(models.Manager):
     def get_queryset(self) -> models.QuerySet:
         return MemberQuerySet(model=self.model, using=self._db)
     def recent(self, username):
         return self.get_queryset().get_user_query(username)
+    def recommend(self, blog_title):
+        return self.get_queryset().get_blog_query(blog_title)
 
 
 class Member(models.Model):

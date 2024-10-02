@@ -34,6 +34,7 @@ class BlogInfoSerializer(serializers.Serializer):
 class RecentSerializer(serializers.ModelSerializer):
     recent_id = serializers.SerializerMethodField()
     recent_url = serializers.SerializerMethodField()
+    recent_blog = serializers.SerializerMethodField()
     class Meta:
         attr = ['recent_id', 'recent_url', 'recent_blog', 'date', 'user_for']
         model = Recent
@@ -45,59 +46,23 @@ class RecentSerializer(serializers.ModelSerializer):
 
     def get_recent_id(self, obj):
         return obj.id if obj.id else None
+    
+    def get_recent_blog(self, obj):
+        return BlogSerializer(obj.recent_blog).data
 
     def to_representation(self ,instance):
         dict = super().to_representation(instance)
         blog_id = dict['recent_blog']
         user_id = dict['user_for']
-        dict['recent_blog'] = {
-            'blog_id' : blog_id,
-            'blog_title' : Blog.objects.get(id=blog_id).title,
-            'blog_url' : f'http://127.0.0.1:8000/api/blog/{blog_id}'
-        }
         user_dict = UserSerializer(user_id).data
         dict['user_for'] = {}
         UserSerializer.run_dict(dict['user_for'], user_dict)
         return dict
-
-class MemberSerializer(serializers.ModelSerializer):
-    auth_info = serializers.SerializerMethodField()
-    class Meta:
-        model = Member
-        fields = ['id','user','blog', 'auth_info']
-        read_only_fields = ['user','blog','auth_info']
     
-    def get_id(self, value):#first to ids are switched 
-        if value == 1:
-            return 2
-        if value == 2:
-            return 1
-        return value
-
-    def get_auth_info(self, obj):
-        user = obj.user
-        return {
-            'username': user.username,
-            'password': user.password
-        }
-    
-    def to_representation(self, instance):
-        dict = super().to_representation(instance)
-        user_id = self.get_id(dict['user'])
-        data = UserSerializer(user_id).data
-        dict['user'] = {}
-        UserSerializer.run_dict(dict['user'], data)
-        blog_list = dict['blog']
-        list = []
-        for blog_id in blog_list:
-            list.append({'blog_id':blog_id, 'blog_url': f'http://127.0.0.1:8000/api/blog/{blog_id}'})
-        dict['blog'] = list
-        return dict
-    
-
 class BlogSerializer(serializers.ModelSerializer):
     blog_id = serializers.SerializerMethodField('get_blog_id')
     state = serializers.SerializerMethodField('get_state')
+    created_user = serializers.SerializerMethodField()
     class Meta:
         model = Blog
         fields = ['blog_id','post', 'title', 'description', 'created_user', 'date', 'number_users', 'state']
@@ -111,19 +76,72 @@ class BlogSerializer(serializers.ModelSerializer):
         
     def get_blog_id(self, obj):
         return obj.id
+    
+    def get_created_user(self, obj):
+        return{
+            'name':obj.created_user.username,
+            'id':obj.created_user.id,
+            'url':f'http://127.0.0.1:8000/api/member/{obj.created_user.id}'
+        }
 
     def to_representation(self, instance):
         dict = super().to_representation(instance)
-        
         post_list = dict['post']
-        list = []
-        for post in post_list:
-            list.append({"post_id": post, "post_url":f'http://127.0.0.1:8000/api/post/{post}'})
-        dict['post'] = list
-
-        user_id = dict['created_user']
-        dict['created_user'] = UserSerializer(user_id).data
+        post_list = [{"post_id": post, "post_url":f'http://127.0.0.1:8000/api/post/{post}'} for post in dict['post']]
+        dict['post'] = post_list
         return dict
+
+class MemberSerializer(serializers.ModelSerializer):
+    recents = serializers.SerializerMethodField()
+    popular = serializers.SerializerMethodField()
+    recommendation = serializers.SerializerMethodField()
+    blogs = serializers.SerializerMethodField()
+    class Meta:
+        model = Member
+        fields = ['id','user','blogs', 'recents', 'popular', 'recommendation']
+        read_only_fields = ['user','blogs', 'recents', 'popular','recommendation']
+    
+    def get_id(self, value):#first to ids are switched 
+        if value == 1:
+            return 2
+        if value == 2:
+            return 1
+        return value
+    
+    def get_blogs(self, obj):
+        return BlogSerializer(obj.blog, many=True).data
+    
+    def get_recommendation(self, obj):
+        recents = self.get_recents(obj)
+        recommend = []
+        for recent in recents:
+            title =  recent['recent_blog']['title']
+            recommend_queryset = Member.objects.recommend(title)
+            all_blogs = BlogSerializer(recommend_queryset, many=True).data
+            if all_blogs:
+                recommend.append(all_blogs)
+        return recommend
+            
+
+    def get_popular(self, obj):
+        raw_data = Blog.objects.popular()
+        data = BlogSerializer(raw_data, many=True).data
+        return data
+
+    def get_recents(self, obj):
+        queryset = Member.objects.recent(obj.user.username)
+        data = RecentSerializer(queryset, many=True).data 
+        return data
+    
+    def to_representation(self, instance):
+        dict = super().to_representation(instance)
+        user_id = self.get_id(dict['user'])
+        data = UserSerializer(user_id).data
+        dict['user'] = {}
+        UserSerializer.run_dict(dict['user'], data)
+
+        return dict
+
     
 
 class RequestSerializer(serializers.ModelSerializer):

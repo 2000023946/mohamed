@@ -1,10 +1,10 @@
 import React, {useState} from 'react'
-function Header(){
+function Header(props){
     return (
         <div>
             <h1 className = "welcome-message">
-            <div href="{% url 'home' %}">
-                Welcome to user.username BlogSpace!
+            <div>
+                Welcome to {props.username} BlogSpace!
             </div>
             </h1>
             <div className="header">

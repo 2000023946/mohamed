@@ -83,7 +83,9 @@ class MemberMixinAPIView(BaseMember, generics.RetrieveAPIView, generics.DestroyA
     View to Retrieve and Destroy Members
     """
 
-class MemberRecentAPIView(APIView):
+class MemberRecentAPIView(APIView, PermissionsAndAuthentication):
+    permission_classes = []
+    authentication_classes = []
     def get(self, request, username):
         queryset = Member.objects.recent(username)
         data = RecentSerializer(queryset, many=True).data 
