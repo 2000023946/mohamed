@@ -1,6 +1,8 @@
 function Blog(props){
+
+
     return(
-        <div>
+        <div onClick={props.handleClick}>
             <div className="blog-contents">
                 <div>
                     <div className ="blog-container">
@@ -19,7 +21,7 @@ function Blog(props){
                                 <p className="date">  {props.date} </p>
                             </div>
                             <div className="status">
-                                <p>{props.status}</p>
+                                <p>{props.state}</p>
                             </div>
                         </div>
                     </div>

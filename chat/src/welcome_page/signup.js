@@ -1,5 +1,5 @@
 import Utility from "./utility"
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 
 
 export default function SignUp(props){
@@ -11,7 +11,7 @@ export default function SignUp(props){
         'password2':''
     })
 
-    const [errorData, setErrorData] = useState('Passwords do not match!');
+    const [errorData, setErrorData] = useState('');
 
     function collectData(event){
         event.preventDefault();
@@ -24,14 +24,22 @@ export default function SignUp(props){
                 body:JSON.stringify(JSON.stringify(data))
             }).then(resp => resp.json())
             .then(data =>{
+                console.log(data)
                 if (data.Success){
-                    Utility.handleClick(props, 'login')
+                    Utility.handleClick(props.page.setPage, 'login')
+                    console.log('success')
                 }else{
                     setErrorData(data.Response)
+                    console.log('error')
                 }
             })
         }
     }
+    useEffect(() =>{
+        if (data.password !== data.password2){
+            setErrorData('Passwords do not match!');
+        }
+    }, [data.password2])
 
     const updateData = e => Utility.updateData(e, setData)
 
@@ -41,7 +49,7 @@ export default function SignUp(props){
             <div className="user-container">
                 <div  className="switch-from" onClick={() => Utility.handleClick(props.page.setPage, 'login')}>Login</div>
                 <h2>Sign up</h2>
-                {data.password !== data.password2 && <p>{errorData}</p>}
+                {<p>{errorData}</p>}
                 <form className="form-container" onSubmit={collectData}>
                         <input onChange={(e) => updateData(e, setData)} className = "text-input" type="text" name="username" placeholder="Enter username" required/>
                         <input onChange={(e) => updateData(e, setData)} className = "text-input" type="email" name="email" placeholder="Email" required/>

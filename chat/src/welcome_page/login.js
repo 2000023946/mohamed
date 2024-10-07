@@ -27,20 +27,23 @@ export default function Login(props){
                 'isError':!data.Success,
                 'error':data.Response
             })
+            localStorage.setItem('token', data.Token)
             return fetch(`http://127.0.0.1:8000/api/member/${data.User_Id}`,{
                 method:'GET',
                 headers: {
-                    "Authorization": `Token ${data.Token}`
+                    "Authorization": `Token ${localStorage.getItem('token')}`
                 },
             }).then(resp => resp.json())
             .then(memberData =>{
                 props.display.setDisplay({
                     'name':'BlogHome',
+                    'main':'home',
                     'memberData':memberData
                 })
-                Utility.handleClick(props.page.setPage, memberData.user.username)
+                const user = memberData.user.username ? 'unkown_user': memberData.user.username
+                Utility.handleClick(props.page.setPage, user)
                 console.log(memberData)
-                localStorage.setItem(memberData.user.username, JSON.stringify(memberData))
+                localStorage.setItem('user', JSON.stringify(memberData))
             })
         })
     }

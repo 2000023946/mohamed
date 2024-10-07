@@ -9,7 +9,9 @@ function App() {
       
   const [display, setDisplay] = useState({
     'name':'WelcomePage',
-    'memberData':{}
+    'main':'',
+    'memberData':{},
+    'error':'',
   })
 
   const [page, setPage] = useState('home')
@@ -30,25 +32,24 @@ function App() {
 
   //reconfigure url links upon reload
   if (display.name==='WelcomePage' && !(['home', 'signup', 'login'].includes(page))){
-    if (localStorage.getItem(page)){
-      setDisplay({
+    setDisplay((oldDisplay) => {
+      return {
+        'memberData':JSON.parse(localStorage.getItem('user')),
         'name':'BlogHome',
-        'memberData': JSON.parse(localStorage.getItem(page))
-      })
-    }else{
-      setDisplay({
-        'name':'WelcomePage',
-        'memberData':{}
-      })
-      setPage('login')
-    }
+        'main':'home',
+        'error':'',
+      }
+    })
   }
   if (display.name === 'BlogHome' && (['home', 'signup', 'login'].includes(page))){
     setDisplay({
       'name':'WelcomePage',
-      'memberData':{}
+      'main':'',
+      'memberData':{},
+      'error':'',
     })
   }
+
 
   return(
     <div>

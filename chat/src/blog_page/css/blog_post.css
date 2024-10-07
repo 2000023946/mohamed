@@ -1,0 +1,118 @@
+p{
+    margin:0px;
+}
+h1, h3{
+    text-align: center;
+}
+.post-on-back{
+    cursor: pointer;
+    color:black;
+}
+.post-content-title{
+    text-align: center;
+}
+.post-title-container{
+    display:flex;
+    flex-direction:column
+}
+.post-title-container > h1{
+    margin-bottom:10px;
+    margin-top:0px;
+}
+.post-text-container{
+    position:fixed;
+    background-color: lightblue;
+    left:5px;
+    right:5px;
+    top:150px;
+    height:500px;
+    overflow-y: scroll;
+}
+.post-form-container{
+    position:fixed;
+    bottom:0px;
+    left:0px;
+    right:0px;
+    height:50px;
+    background-color: blue;
+    display:flex;
+    align-items: center;
+    justify-content: space-evenly;
+    z-index: 1000;
+}
+.post-form-container  div{
+    display:flex;
+    width:700px;
+    border:1px solid red;
+    align-items: center;
+    justify-content: center;
+}
+.post-search-bar{
+    width:600px;
+    padding:10px;
+    border-radius: 0px;;
+    border-top-left-radius: 20px;;
+    border-bottom-left-radius: 20px;;
+    border:none;
+    margin:0px;
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.4) inset;
+}
+.post-add-container{
+    width:100%;
+}
+.post-add-button{
+    padding:10px 20px;;
+    border: none;;
+    border-top-right-radius: 20px;;
+    border-bottom-right-radius: 20px;;
+    margin-left:-4px;
+    cursor: pointer;
+    transition: background-color 0.2s,
+                color            0.2s;;
+}
+.post-add-button:hover{
+    background-color:rgb(224, 217, 217);
+}
+.post-add-button:active{
+    background-color: rgb(185, 180, 180);
+    color:rgb(255, 255, 255);
+}
+.post-message{
+    background-color: rgb(244, 188, 84);
+    margin:10px;
+    padding:10px;
+    border-radius:10px;
+    cursor: pointer;
+    position: relative;
+    width:90%;
+}
+.post-remove-button,
+.post-update-button{
+    opacity: 0;
+    transition: opacity 0.2s;
+    position:absolute;
+    text-decoration: none;
+    color:black;
+    transition: text-decoration 0.2s;
+}
+.post-remove-button{
+    top:5px;
+    right:5px;
+}
+.post-update-button{
+    bottom:5px;
+    right:5px;
+}
+.post-remove-button:hover,
+.post-update-button:hover{
+    text-decoration: underline;
+}
+.post-remove-button:active,
+.post-update-button:active{
+    text-decoration: underline;
+    color:blue;
+}
+.post-message:hover .remove-button,
+.post-message:hover .update-button{
+    opacity: 1;
+}
