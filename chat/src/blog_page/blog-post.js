@@ -7,7 +7,7 @@ export default function BlogPost(props){
     // return(
     //     <Post  {...props} />
     // )
-
+    console.log(props)
     const [postList, setPostList] = useState([])
 
     const [text, setText] = useState('')
@@ -40,6 +40,42 @@ export default function BlogPost(props){
         }
     },[])
 
+
+    const [data, setData] = useState({
+        'socket':null,
+        'send': {'type':'msg'},
+        'recieve': []
+    })
+
+    useEffect(() =>{
+        const socket = new WebSocket(`ws://localhost:8000/ws/chat_room/${blogId}`)
+        setData(oldValue =>{
+            return {
+                ...oldValue,
+                'socket':socket
+            }
+        })
+        socket.onopen = event =>{
+            console.log(event)
+        }
+        socket.onmessage = event =>{
+            const data = JSON.parse(event.data)
+            console.log('dat recv', data)
+            setPostList((oldValue) =>{
+                return [
+                    ...oldValue, <Post key={Math.random(1)*Math.random(1)*Math.random(1)*Math.random(1)} {...data}/>
+                ]
+            })
+        }
+        socket.close = event =>{
+            console.log(event)
+        }
+    }, [])
+
+    const sendMessage = (message) =>{
+        data.socket.send(JSON.stringify(message))
+    }
+
     console.log(props)
 
     const collectData = (event) =>{
@@ -48,6 +84,7 @@ export default function BlogPost(props){
         })
         console.log(event.target.value)
     }
+
     const sendPostData = (event) =>{
         event.preventDefault()
         fetch(`http://localhost:8000/api/post/`, {
@@ -63,32 +100,28 @@ export default function BlogPost(props){
         }).then(resp => resp.json())
         .then(data => {
             console.log(data)
-            setPostList((oldValue) =>{
-                return [
-                    ...oldValue, <Post key={Math.random(1)*Math.random(1)*Math.random(1)*Math.random(1)} {...data}/>
-                ]
-            })
+            console.log('new props', props)
             setText('')
-            fetch(`http://localhost:8000/api/recent/`, {
-                method: 'POST',
-                headers:{
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${localStorage.getItem('token')}`
-                },
-                body:JSON.stringify({
-                    'user_for':`${props.display.memberData.user.user_id}`,
-                    'blog_id': `${blogId}`,
-                })
-            }).then(resp => resp.json())
+            const sendData = {
+                ...data,
+                'type':'msg',
+            }
+            sendMessage(sendData)
+        event.preventDefault()
+        fetch(`http://localhost:8000/api/recent/`, {
+            method: 'POST',
+            headers:{
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${localStorage.getItem('token')}`
+            },
+            body:JSON.stringify({
+                'user_for':`${props.display.memberData.user.user_id}`,
+                'blog_id': `${blogId}`,
+            })
+        }).then(resp => resp.json())
             .then(data =>{
                 console.log('new recent', data)
-                let makeNewRecent = true
-                props.display.memberData.recents.forEach(recent =>{
-                    if(recent.recent_blog.blog_id === blogId){
-                        makeNewRecent = false
-                    }
-                })
-                if(makeNewRecent){
+                if(data['recent_id'] !== -1){
                     let oldRecentList = props.display.memberData.recents
                     oldRecentList.push(data)
                     props.display.setDisplay(oldValue =>{
@@ -100,13 +133,10 @@ export default function BlogPost(props){
                             }
                         }
                     })
-                    console.log('new recent made')
                     localStorage.setItem('user', JSON.stringify(props.display.memberData))
-                }   
-                if(!makeNewRecent){
-                    console.log('no new recent made')
+                }else{
+                    console.log('no new recent')
                 }
-                console.log('new data', props)
             })
         })
     }

@@ -10,6 +10,7 @@ const Utility = {
 }
 
 function isAllowed( props, blog){
+
   const acceptUser = () =>{
     Utility.changeMain(props.display.setDisplay, 'post')
       props.post.setPostData({
@@ -78,7 +79,7 @@ function isAllowed( props, blog){
             }
           }
         })
-        localStorage.setItem('user', props.display.memberData)
+        localStorage.setItem('user', JSON.stringify(props.display.memberData))
         console.log(props)
       })
     }

@@ -24,5 +24,6 @@ urlpatterns = [
     ## posting new user data
     path('signup/', auth_views.SignUpUserAPIView.as_view()),
     path('login/', auth_views.LoginView.as_view())
+    #urls for the websocket
 ]
 

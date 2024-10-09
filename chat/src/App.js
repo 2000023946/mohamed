@@ -14,7 +14,7 @@ function App() {
     'error':'',
   })
 
-  const [page, setPage] = useState('home')
+  const [page, setPage] = useState('home');
 
   const data={
     'display':{
@@ -49,7 +49,6 @@ function App() {
       'error':'',
     })
   }
-
 
   return(
     <div>

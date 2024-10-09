@@ -35,7 +35,11 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME_LATE_USER': timedelta(days=30),
 }
 
-
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 
 
@@ -58,6 +62,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'home',
     'welcome_page',
     'posts',
@@ -71,7 +76,8 @@ INSTALLED_APPS = [
     'api',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
-    'corsheaders'
+    'corsheaders',
+    'websocket',
 ]
 
 MIDDLEWARE = [
@@ -109,6 +115,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'blog.wsgi.application'
 
+ASGI_APPLICATION ='blog.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

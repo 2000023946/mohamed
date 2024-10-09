@@ -10,6 +10,7 @@ import SearchResult from './serach_result';
 function BlogHome(props){
 
     const [postData, setPostData] = useState({})
+    console.log(props)
 
     return(
         <div>  

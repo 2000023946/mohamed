@@ -23,12 +23,13 @@ class RecentListAPIView(RecentBase, generics.ListCreateAPIView):
     """
     def post(self, request):
         data = request.data
-        print(data)
         user_for_id, blog_id = data.values()
         if int(user_for_id) < 3:
             user_for_id = 1 if user_for_id == 2 else 2
         user_for = User.objects.get(id=user_for_id)
         recent_blog = Blog.objects.get(id=blog_id)
+        if Recent.objects.filter(recent_blog=recent_blog, user_for=user_for).exists():
+            return Response({'recent_id':-1})
         recent = Recent.objects.create(user_for=user_for, recent_blog=recent_blog)
         recent.save()
         serialized_data = RecentSerializer(recent).data
@@ -114,7 +115,6 @@ class RequestListAPIView(BaseRequest, generics.ListCreateAPIView, generics.Updat
     View to List All Requests
     """
     def post(self, request):
-        print(request.data)
         user_from, user_to, blog = request.data.values()
         user_from = Member.objects.get(id=user_from)
         user_to = Member.objects.get(id=user_to)
@@ -157,12 +157,9 @@ class PostListAPIView(PermissionsAndAuthentication, generics.ListCreateAPIView):
         posts = PostSerializer(queryset, many=True).data
         return Response(posts)
     def post(self, request):
-        print(request.POST)
         data = request.data
-        print(data)
         username, data_list = data.values()
         txt_message, blog_id = data_list.split(',')
-        print(username, txt_message, blog_id)
         post = Post.objects.create(username=username, txt_message=txt_message)
         post.save()
         blog = Blog.objects.get(id=blog_id)

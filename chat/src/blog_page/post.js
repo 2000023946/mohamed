@@ -1,6 +1,6 @@
 import './css/blog_post.css'
-import Utility from '../welcome_page/utility'
 export default function Post(props){
+    console.log('props for post', props)
     return(
         <div className="post-message">
             <p> {props.username} </p><br/>
