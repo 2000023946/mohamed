@@ -1,12 +1,12 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json 
 from channels.db import database_sync_to_async
-from posts.models import Member
+from posts.models import Member, Request
 class MyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_id = self.scope['url_route']['kwargs']['room_id']
         self.room_name = f'room_{self.room_id}'
-        
+
         await self.channel_layer.group_add(
             self.room_name,
             self.channel_name
@@ -29,16 +29,16 @@ class MyConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        type = data['type']
-        print('asasfd23')
-        if type == 'msg':
-            await self.channel_layer.group_send(
-                self.room_name,
-                {
-                    'type':'chat.message',
-                    'data':data
-                }
-            )
+        
+        await self.channel_layer.group_send(
+            self.room_name,
+            {
+                'type':'chat.message',
+                'data':data
+            }
+        )
+        
+
     async def chat_message(self, event):
         await self.send(json.dumps((event['data'])))
 
@@ -57,14 +57,16 @@ class RequestConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
         print(self.usernames)
+
     async def disconnect(self, code):
-        self.usernames.remove(self.username)
+        print(self.usernames)
+        self.usernames.discard(self.username)
+        print(self.usernames)
         await self.close()
+
     async def receive(self, text_data):
         data = json.loads(text_data)
-        username = data['user_to']['username']
-        print('all', self.usernames)
-        print(username)
+        username = data['user']
         if username in self.usernames:
             await self.channel_layer.group_send(
                 f'request_{username}',
@@ -74,23 +76,20 @@ class RequestConsumer(AsyncWebsocketConsumer):
                     'data':data
                 }
             )
-        else:
-            await self.channel_layer.group_send(
-                self.request_name,
-                {
-                    'type':'chat.message',
-                    'status':False,
-                    'data':'user not online'
-                }
-            )
+
     @database_sync_to_async
     def get_username(self, id):
         member = Member.objects.get(id=id)
         username = member.user.username
         print('username', username)
         return username
+    
+    @database_sync_to_async
+    def request_exist(self, id):
+        return Request.objects.filter(id=id).exists()
 
     async def chat_message(self, event):
         await self.send(
             json.dumps(event['data'])
         )
+    

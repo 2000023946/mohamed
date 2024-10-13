@@ -6,6 +6,8 @@ import BlogPost from './blog-post'
 import CreateBlog from './create_blog'
 import Notification from './notification';
 import SearchResult from './serach_result';
+import UpdatePost from './update';
+import RemovePost from './remove';
 
 function BlogHome(props){
 
@@ -27,6 +29,8 @@ function BlogHome(props){
                     <SearchResult {...{...props, 'post': {'postData':postData, 'setPostData':setPostData}}}/>
                 </div>            
             }
+            {props.display.main === 'remove' && <RemovePost {...props}/>}
+            {props.display.main === 'update' && <UpdatePost {...props}/>}
             {props.display.main === 'notification' && <Notification {...props} />}
             {props.display.main === 'create_blog' && <CreateBlog {...{...props, 'post': {'postData':postData, 'setPostData':setPostData}}} />}
             {props.display.main === 'post' && <BlogPost {...{...props, 'post': {'postData':postData, 'setPostData':setPostData}}} /> }

@@ -83,26 +83,26 @@ h1, h3{
     padding:10px;
     border-radius:10px;
     cursor: pointer;
-    position: relative;
+    display:flex;
+    justify-content: space-between;
     width:90%;
 }
-.post-remove-button,
-.post-update-button{
-    opacity: 0;
-    transition: opacity 0.2s;
-    position:absolute;
-    text-decoration: none;
-    color:black;
-    transition: text-decoration 0.2s;
+.post-button-container{
+    display:flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: display 0.2s;
 }
-.post-remove-button{
-    top:5px;
-    right:5px;
+
+.post-hide-container{
+    display:none;
 }
-.post-update-button{
-    bottom:5px;
-    right:5px;
+
+.post-button-container > div:hover{
+    text-decoration: underline;
 }
+
+
 .post-remove-button:hover,
 .post-update-button:hover{
     text-decoration: underline;
@@ -111,8 +111,4 @@ h1, h3{
 .post-update-button:active{
     text-decoration: underline;
     color:blue;
-}
-.post-message:hover .remove-button,
-.post-message:hover .update-button{
-    opacity: 1;
 }

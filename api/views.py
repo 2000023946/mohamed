@@ -49,11 +49,22 @@ class BlogListAPIView(BaseBlog, generics.ListCreateAPIView):
     View to List All Blogs
     """
 
-class BlogMixinAPIView(BaseBlog, generics.RetrieveAPIView):
-    serializer_class = BlogPostInfoSerializer
+class BlogMixinAPIView(BaseBlog, generics.RetrieveAPIView, generics.UpdateAPIView):
     """
     View to Retrieve and Destroy Blogs
     """
+    def put(self, request, pk):
+        data = request.data
+        print(data['data'].keys())
+
+        blog_id = data['data']['data']['blog']['blog_id']
+        member_id = data['data']['data']['user_from']['user_id']
+        blog = Blog.objects.get(id=blog_id)
+        member = Member.objects.get(id=member_id)
+        member.blog.add(blog)
+        member_data = MemberSerializer(member).data
+        return Response(member_data)
+
 
 
 class BlogSearchAPIView(APIView):
@@ -110,7 +121,7 @@ class BaseRequest(PermissionsAndAuthentication, generics.GenericAPIView):
     queryset = Request.objects.all()
     serializer_class = RequestSerializer
 
-class RequestListAPIView(BaseRequest, generics.ListCreateAPIView, generics.UpdateAPIView):
+class RequestListAPIView(BaseRequest, generics.ListCreateAPIView):
     """
     View to List All Requests
     """
@@ -124,10 +135,15 @@ class RequestListAPIView(BaseRequest, generics.ListCreateAPIView, generics.Updat
         serialized_data = RequestSerializer(request).data
         return Response(serialized_data)
     
-    def put(self, request, *args, **kwargs):
+class RequestMixinAPIView(BaseRequest, generics.DestroyAPIView, generics.RetrieveAPIView, generics.UpdateAPIView):
+    """
+    View to Retrieve or Destroy All Requests
+    """
+    def put(self, request, pk):
         data = request.data
-        request_id, is_accepted = data.values()
-        request = Request.objects.get(id=request_id)
+        print(data)
+        is_accepted = data['is_accepted']
+        request = Request.objects.get(id=pk)
         if is_accepted:#add the user to the blog if accepted
             request.status = 1
             user_from = request.user_from
@@ -138,17 +154,12 @@ class RequestListAPIView(BaseRequest, generics.ListCreateAPIView, generics.Updat
         request.save()
         serialized_data = RequestSerializer(request).data
         return Response(serialized_data)
-    
-class RequestMixinAPIView(BaseRequest, generics.DestroyAPIView, generics.RetrieveAPIView):
-    """
-    View to Retrieve or Destroy All Requests
-    """
 
 class BasePost(PermissionsAndAuthentication, generics.GenericAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
-class PostListAPIView(PermissionsAndAuthentication, generics.ListCreateAPIView):
+class PostListAPIView(BasePost, PermissionsAndAuthentication, generics.ListCreateAPIView):
     """
     View to List All Posts
     """
@@ -167,10 +178,33 @@ class PostListAPIView(PermissionsAndAuthentication, generics.ListCreateAPIView):
         blog.save()
         return Response({'username':username, 'txt_message':txt_message, 'date':post.date})
 
-class PostMixinAPIView(BasePost, generics.RetrieveAPIView, generics.DestroyAPIView):
+class PostMixinAPIView(BasePost, generics.RetrieveAPIView, generics.DestroyAPIView, generics.UpdateAPIView):
     """
     View to Retrieve and Destroy Posts
     """
+    def put(self, request, pk):
+        data = request.data
+        content = data['content']
+        blog_id = data['blog_id']
+        blog = Blog.objects.get(id=blog_id)
+        post = Post.objects.get(id=pk)
+        post.txt_message = content
+        post.save()
+        serialized_data = BlogSerializer(blog).data
+        return Response(serialized_data)
+    def delete(self, request, pk):
+        data = request.data
+        post = Post.objects.get(id=pk)
+        post.delete()
+        blog_id = data['blog_id']
+        blog = Blog.objects.get(id=blog_id)
+        serialized_data = BlogSerializer(blog).data
+        return Response(serialized_data)
+
+        
+        
+    
+
 
 class PopularAPIView(APIView):
     def get(self, request):

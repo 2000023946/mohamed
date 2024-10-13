@@ -50,6 +50,8 @@ function App() {
     })
   }
 
+  
+
   return(
     <div>
       {display.name === 'BlogHome' && <BlogHome {...data}/>}

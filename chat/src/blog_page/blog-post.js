@@ -31,8 +31,15 @@ export default function BlogPost(props){
                         data
                     }
                 })
+                console.log(data)
+                props.display.setDisplay(oldValue =>{
+                    return {
+                        ...oldValue,
+                        'blogId':data.blog_id
+                    }
+                })
                 const displayList =  data.post.map(post =>{
-                    return <Post key={Math.random(1)*Math.random(1)*Math.random(1)*Math.random(1)} {...post.post_id}/>
+                    return <Post key={Math.random(1)*Math.random(1)*Math.random(1)*Math.random(1)} {...props} {...post}/>
                 })
                 setTitle(data.title)
                 setPostList(displayList)
@@ -48,7 +55,7 @@ export default function BlogPost(props){
     })
 
     useEffect(() =>{
-        const socket = new WebSocket(`ws://localhost:8000/ws/chat_room/${blogId}`)
+        const socket = new WebSocket(`ws://localhost:8000/ws/chat_room/${blogId}/`)
         setData(oldValue =>{
             return {
                 ...oldValue,
@@ -61,11 +68,25 @@ export default function BlogPost(props){
         socket.onmessage = event =>{
             const data = JSON.parse(event.data)
             console.log('dat recv', data)
-            setPostList((oldValue) =>{
-                return [
-                    ...oldValue, <Post key={Math.random(1)*Math.random(1)*Math.random(1)*Math.random(1)} {...data}/>
-                ]
-            })
+            if (data['type'] === 'msg'){
+                setPostList((oldValue) =>{
+                    return [
+                        ...oldValue, <Post key={Math.random(1)*Math.random(1)*Math.random(1)*Math.random(1)} {...props} {...data}/>
+                    ]
+                })
+            }else if (data['type'] === 'update'){
+                const newPostList = data['data']['post'].map(post =>{
+                    return <Post key={Math.random(1)*Math.random(1)*Math.random(1)*Math.random(1)} {...props} {...post}/>
+                })
+                setPostList(newPostList)
+                console.log(postList, newPostList)
+            }else if(data['type'] === 'remove'){
+                const newPostList = data['data']['post'].map(post =>{
+                    return <Post key={Math.random(1)*Math.random(1)*Math.random(1)*Math.random(1)} {...props} {...post}/>
+                })
+                setPostList(newPostList)
+                console.log(postList, newPostList)
+            }
         }
         socket.close = event =>{
             console.log(event)
@@ -143,7 +164,7 @@ export default function BlogPost(props){
 
 
     return(
-        <div >
+        <div>
             <div className="post-content-title">
                 <div className='post-title-container'>
                     {title !== '' && <h1> {title}</h1>}

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from welcome_page.models import *
+
 from posts.models import *
 
 class UserSerializer(serializers.Serializer):
@@ -63,6 +64,7 @@ class BlogSerializer(serializers.ModelSerializer):
     state = serializers.SerializerMethodField('get_state')
     created_user = serializers.SerializerMethodField()
     allowed_users = serializers.SerializerMethodField()
+    post = serializers.SerializerMethodField()
     class Meta:
         model = Blog
         fields = ['blog_id','post', 'title', 'description', 'created_user', 'date', 'number_users', 'state', 'allowed_users']
@@ -87,16 +89,11 @@ class BlogSerializer(serializers.ModelSerializer):
             'id':obj.created_user.id,
             'url':f'http://127.0.0.1:8000/api/member/{obj.created_user.id}'
         }
-
-    def to_representation(self, instance):
-        dict = super().to_representation(instance)
-        try:
-            post_list = dict['post']
-            post_list = [{"post_id": post, "post_url":f'http://127.0.0.1:8000/api/post/{post}'} for post in dict['post']]
-            dict['post'] = post_list
-        except TypeError:
-            """"""
-        return dict
+    
+    def get_post(self, obj):
+        print(obj)
+        posts = PostSerializer(obj.post, many=True).data
+        return posts
 
 
 class MemberSerializer(serializers.ModelSerializer):
@@ -217,16 +214,11 @@ class RequestSerializer(serializers.ModelSerializer):
         return dict
 
 class PostSerializer(serializers.ModelSerializer):
-    user_url = serializers.SerializerMethodField('get_user_url')
     class Meta:
         model = Post
         fields = '__all__'
         read_only_fields = ['date']
 
-    def get_user_url(self, obj):
-        user = User.objects.get(username=obj.username)
-        user_id = user.id
-        return f'http://127.0.0.1:8000/api/member/{user_id}'
 
 
 class BlogPostInfoSerializer(BlogSerializer):
